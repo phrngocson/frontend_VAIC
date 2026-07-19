@@ -277,16 +277,19 @@ export const apiDeleteResident = async (id) => {
   return res.json();
 };
 
-export const apiImportResidents = async (records) => {
+export const apiImportResidents = async (communeId, file) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('commune_id', communeId.toString());
+
   const res = await fetch(`${API_BASE_URL}/api/residents/import`, {
     method: 'POST',
     headers: { 
-      'Content-Type': 'application/json', 
       'ngrok-skip-browser-warning': '69420',
       ...(token ? {'Authorization': `Bearer ${token}`} : {}) 
     },
-    body: JSON.stringify({ records })
+    body: formData
   });
   if (!res.ok) throw new Error('Import failed');
   return res.json();

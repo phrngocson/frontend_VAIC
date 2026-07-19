@@ -106,30 +106,11 @@ export default function ResidentsDB({ isProv, showToast, communesData }) {
       return;
     }
 
-    const text = await file.text();
-    const rows = text.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-    if (rows.length <= 1) {
-       showToast('File trống hoặc không có dữ liệu', '❌');
-       return;
-    }
-    
-    const records = [];
-    for (let i = 1; i < rows.length; i++) {
-      const cols = rows[i].split(',');
-      if (cols.length >= 3) {
-        records.push({
-          commune_id: isProv && communeId ? parseInt(communeId) : (communesData[0]?.id || 1),
-          name: cols[0].trim(),
-          phone: cols[1].trim(),
-          ethnic: cols[2].trim(),
-          literate: cols[3] ? (cols[3].trim() === '1' || cols[3].trim().toLowerCase() === 'true') : true
-        });
-      }
-    }
+    const cid = isProv && communeId ? parseInt(communeId) : (communesData[0]?.id || 1);
 
     try {
-      showToast(`Đang nhập ${records.length} bản ghi...`, '⏳');
-      await apiImportResidents(records);
+      showToast(`Đang tải file lên...`, '⏳');
+      await apiImportResidents(cid, file);
       showToast('Import thành công', '✅');
       mutate();
     } catch (err) {
