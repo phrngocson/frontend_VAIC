@@ -41,7 +41,7 @@ export function useDashboardData(emergency, timeRange) {
       
       // Use real recv_rate if commune has it, else use global DB rate with slight variation
       const randomJitter = ((c.id % 11) - 5) / 100; // -0.05 to +0.05
-      let rate = c.recv_rate !== undefined ? c.recv_rate : (globalRate + randomJitter);
+      let rate = c.recv_rate != null ? c.recv_rate : (globalRate + randomJitter);
       rate = Math.max(0, Math.min(1, rate)); // clamp 0-1
       
       const received = Math.round(c.population * rate);
@@ -121,7 +121,7 @@ export function useDashboardData(emergency, timeRange) {
       commune: `Xã ID: ${n.commune_id}`,
       channel: n.channel,
       channelIcon: n.channel === 'zalo' ? '💬' : n.channel === 'sms' ? '✉️' : '📞',
-      ethnic: n.ethnic_language,
+      ethnic: n.ethnic_language || 'Kinh',
       recipientsStr: fmt(n.recipient_count),
       statusLabel: n.status === 'delivered' ? 'Đã gửi' : n.status === 'failed' ? 'Thất bại' : 'Đang xử lý',
       pillStyle: n.status === 'delivered' ? pill('#1E9E6A', '#E7F6EF') : n.status === 'failed' ? pill('#E23D3D', '#FDECEC') : pill('#25ADE3', '#EAF7FD')
@@ -135,12 +135,12 @@ export function useDashboardData(emergency, timeRange) {
       const isAct = p.status === 'active';
       const meta = isAct ? { label: 'Còn hiệu lực', color: '#1E9E6A', bg: '#E7F6EF' } : { label: 'Hết hiệu lực', color: '#9AA4B0', bg: '#EEF2F6' };
       return {
-        code: p.id,
+        code: p.code || p.id,
         title: p.title,
-        type: p.document_type,
-        by: 'Hệ thống',
-        start: new Date(p.created_at).toLocaleDateString(),
-        end: 'Không thời hạn',
+        type: p.doc_type || p.document_type,
+        by: p.issued_by || 'Hệ thống',
+        start: p.start_date ? new Date(p.start_date).toLocaleDateString() : (p.created_at ? new Date(p.created_at).toLocaleDateString() : 'N/A'),
+        end: p.end_date ? new Date(p.end_date).toLocaleDateString() : 'Không thời hạn',
         status: p.status,
         statusLabel: meta.label,
         pillStyle: pill(meta.color, meta.bg)
