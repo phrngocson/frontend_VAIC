@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { s } from '@/lib/style';
-import { useDashboardData, useDetailData } from '@/lib/api';
+import { useDashboardData, useDetailData, API_BASE_URL } from '@/lib/api';
 
 import { User } from './dashboard/types';
 import Sidebar from './dashboard/Sidebar';
@@ -48,7 +48,7 @@ export default function Dashboard({ user, onLogout, onLoginRequest }: MainDashbo
     if (nextState) {
       showToast('Đang phân tích rủi ro & gọi AI Agent...', '⏳');
       try {
-        const res = await fetch('http://localhost:8000/api/agent/manual-trigger', {
+        const res = await fetch(`${API_BASE_URL}/api/agent/manual-trigger`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -76,7 +76,7 @@ export default function Dashboard({ user, onLogout, onLoginRequest }: MainDashbo
   const handleAction = async (action: string, communeId: string | number, hamletName: string) => {
     try {
       showToast(`Đang xử lý yêu cầu ${action}...`, '⏳');
-      const res = await fetch(`http://localhost:8000/api/notifications/${action}`, {
+      const res = await fetch(`${API_BASE_URL}/api/notifications/${action}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ commune_id: communeId, hamlet_id: 1 })
