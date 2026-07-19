@@ -38,6 +38,7 @@ export default function ResidentsDB({ isProv, showToast, communesData }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', phone: '', ethnic: 'Kinh', literate: true });
+  const [isDragging, setIsDragging] = useState(false);
   
   const fileInputRef = useRef(null);
 
@@ -120,8 +121,47 @@ export default function ResidentsDB({ isProv, showToast, communesData }) {
     e.target.value = null;
   };
 
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    
+    if (!file.name.endsWith('.csv')) {
+      showToast('Chỉ hỗ trợ file CSV', '❌');
+      return;
+    }
+
+    const cid = isProv && communeId ? parseInt(communeId) : (communesData[0]?.id || 1);
+
+    try {
+      showToast(`Đang tải file lên...`, '⏳');
+      await apiImportResidents(cid, file);
+      showToast('Import thành công', '✅');
+      mutate();
+    } catch (err) {
+      showToast('Lỗi khi Import CSV', '❌');
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
   return (
-    <div style={s('padding:22px 26px;')}>
+    <div 
+      style={s(`padding:22px 26px; min-height:100%; transition:all 0.2s; ${isDragging ? 'background:rgba(37,173,227,0.05); border:2px dashed #25ADE3;' : 'border:2px solid transparent;'}`)}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
       {/* Filters & Actions */}
       <div style={s('display:flex; justify-content:space-between; margin-bottom:20px; align-items:center;')}>
         <div style={s('display:flex; gap:12px;')}>
