@@ -26,7 +26,7 @@ export default function Login({ onLoginSuccess, onCancel }: LoginProps) {
     setError('');
 
     try {
-      const email = `${phone}@dienbien.gov.vn`;
+      const email = phone.includes('@') ? phone : `${phone}@dienbien.gov.vn`;
       const { data, error: supaError } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -75,12 +75,12 @@ export default function Login({ onLoginSuccess, onCancel }: LoginProps) {
 
         <form onSubmit={handleLogin} style={s('display:flex; flex-direction:column; gap:20px;')}>
           <div>
-            <label style={s('display:block; font-size:13px; margin-bottom:8px; color:rgba(255,255,255,0.8); font-weight:500;')}>Số điện thoại</label>
+            <label style={s('display:block; font-size:13px; margin-bottom:8px; color:rgba(255,255,255,0.8); font-weight:500;')}>Tài khoản (Số điện thoại hoặc Email)</label>
             <input 
               type="text" 
               value={phone} 
               onChange={e => setPhone(e.target.value)}
-              placeholder="VD: 0912345678"
+              placeholder="VD: 0912345678 hoặc canbo@gmail.com"
               style={s('width:100%; height:46px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:0 16px; color:#fff; font-size:15px; outline:none; transition:border 0.2s; box-sizing:border-box;')} 
               onFocus={e => e.target.style.borderColor = '#25ADE3'}
               onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.15)'}
