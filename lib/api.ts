@@ -6,7 +6,10 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost
 
 const fetcher = async (url) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-  const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+  const headers = { 
+    'ngrok-skip-browser-warning': '69420',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
   const res = await fetch(url, { headers });
   if (!res.ok) throw new Error('API Error');
   const json = await res.json();
@@ -235,7 +238,11 @@ export const apiCreateResident = async (data) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   const res = await fetch(`${API_BASE_URL}/api/residents`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? {'Authorization': `Bearer ${token}`} : {}) },
+    headers: { 
+      'Content-Type': 'application/json', 
+      'ngrok-skip-browser-warning': '69420',
+      ...(token ? {'Authorization': `Bearer ${token}`} : {}) 
+    },
     body: JSON.stringify(data)
   });
   if (!res.ok) throw new Error('Create failed');
@@ -246,7 +253,11 @@ export const apiUpdateResident = async (id, data) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   const res = await fetch(`${API_BASE_URL}/api/residents/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...(token ? {'Authorization': `Bearer ${token}`} : {}) },
+    headers: { 
+      'Content-Type': 'application/json', 
+      'ngrok-skip-browser-warning': '69420',
+      ...(token ? {'Authorization': `Bearer ${token}`} : {}) 
+    },
     body: JSON.stringify(data)
   });
   if (!res.ok) throw new Error('Update failed');
@@ -257,7 +268,10 @@ export const apiDeleteResident = async (id) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   const res = await fetch(`${API_BASE_URL}/api/residents/${id}`, { 
     method: 'DELETE',
-    headers: token ? {'Authorization': `Bearer ${token}`} : {}
+    headers: {
+      'ngrok-skip-browser-warning': '69420',
+      ...(token ? {'Authorization': `Bearer ${token}`} : {})
+    }
   });
   if (!res.ok) throw new Error('Delete failed');
   return res.json();
@@ -267,7 +281,11 @@ export const apiImportResidents = async (records) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   const res = await fetch(`${API_BASE_URL}/api/residents/import`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(token ? {'Authorization': `Bearer ${token}`} : {}) },
+    headers: { 
+      'Content-Type': 'application/json', 
+      'ngrok-skip-browser-warning': '69420',
+      ...(token ? {'Authorization': `Bearer ${token}`} : {}) 
+    },
     body: JSON.stringify({ records })
   });
   if (!res.ok) throw new Error('Import failed');
